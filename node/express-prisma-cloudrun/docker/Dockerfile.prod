@@ -1,0 +1,10 @@
+FROM node:lts-slim
+
+WORKDIR /usr/api
+
+ENV PORT 8080
+COPY ../api ./
+
+RUN npm ci --only=production
+RUN npm run build
+CMD [ "npm", "start" ]

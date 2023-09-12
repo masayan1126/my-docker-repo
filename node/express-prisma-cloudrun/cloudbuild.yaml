@@ -1,0 +1,36 @@
+steps:
+  # イメージビルド
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'build-docker-image-from-dockerfile'
+    args: ['build', '-t', "${_REPO_IMAGE_FULL_PATH}", "${_BUILD_CONTEXT}", '-f', "${_DOCKER_FILE_PATH}"]
+
+  #　イメージ保存
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'push-docker-image-to-gcr'
+    args: ["push", "${_REPO_IMAGE_FULL_PATH}"]
+
+  # デプロイ
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk:slim"
+    entrypoint: gcloud
+    args:
+      [
+        "run",
+        "deploy",
+        "${_SERVICE_NAME}",
+        "--image",
+        "${_REPO_IMAGE_FULL_PATH}",
+        "--region",
+        "${_DEPLOY_REGION}",
+        "--platform",
+        "managed",
+        "--allow-unauthenticated",
+      ]
+substitutions:
+  # デフォルト値を設定。実際の値はコンソールのCloud buildトリガー設定、代入変数から登録
+  _DEPLOY_REGION: asia-northeast1
+  _REPO_NAME: my-repo
+  _SERVICE_NAME: my-service
+  _IMAGE_NAME: my-image:latest
+  _BUILD_CONTEXT: .
+  _DOCKER_FILE_PATH: ./docker/Dockerfile
+  _REPO_IMAGE_FULL_PATH: "${_AR_HOSTNAME}/${PROJECT_ID}/${_REPO_NAME}/${_IMAGE_NAME}"
