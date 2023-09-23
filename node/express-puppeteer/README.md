@@ -11,7 +11,7 @@ docker build -t my-image -f docker/Dockerfile .
 
 ```
 # docker container run -v <ホストのパス:コンテナのパス> -p <ホストのport:コンテナのポート> --name <コンテナ名> <イメージ名>
-docker container run --rm -v /Users/usename/・・・/app:/opt/app -d -p 13000:3000 --restart=always -it --name my-container my-image
+docker container run -v /Users/usename/・・・/app:/opt/app -d -p 13000:3000 --restart=always -it --name my-container my-image
 ```
 
 ### 依存関係インストール・開発サーバー起動
